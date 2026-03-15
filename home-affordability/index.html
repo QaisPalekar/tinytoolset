@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Loan Calculator — EMI to Loan Amount</title>
+  <meta name="description"
+    content="Find out how much home loan you can afford based on your monthly EMI budget. Compare 10, 20, and 30 year loan terms instantly." />
+  <meta property="og:title" content="Home Loan Calculator" />
+  <meta property="og:description"
+    content="Calculate how much home loan you can afford based on your monthly EMI budget." />
+  <meta property="og:type" content="website" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --surface-alt: #f9f8f5;
+      --border: #e2dfd8;
+      --primary: #1a3a5c;
+      --primary-light: #2a5080;
+      --accent: #e8613a;
+      --accent-light: #f5845e;
+      --text: #1c2b3a;
+      --text-muted: #6b7a8a;
+      --text-light: #9aa6b0;
+      --success: #2d7a4f;
+      --radius: 12px;
+      --radius-lg: 20px;
+      --shadow: 0 4px 24px rgba(26, 58, 92, 0.08);
+      --shadow-lg: 0 8px 40px rgba(26, 58, 92, 0.14);
+      --font-serif: 'Georgia', 'Times New Roman', serif;
+      --font: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      max-width: 540px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 1rem;
+    }
+
+    .header h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: normal;
+      color: var(--primary);
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 520px;
+      padding: 2rem;
+    }
+
+    /* Input group */
+    .field {
+      margin-bottom: 1.75rem;
+    }
+
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .field label .value-badge {
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.78rem;
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-prefix {
+      position: absolute;
+      left: 14px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 2.2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--surface-alt);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.1);
+    }
+
+    /* Slider */
+    .slider-container {
+      margin-top: 0.4rem;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 100px;
+      background: linear-gradient(to right, var(--primary) 0%, var(--primary) var(--pct, 28%), var(--border) var(--pct, 28%), var(--border) 100%);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 3px solid var(--primary);
+      box-shadow: 0 2px 8px rgba(26, 58, 92, 0.2);
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      border-color: var(--accent);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 3px solid var(--primary);
+      box-shadow: 0 2px 8px rgba(26, 58, 92, 0.2);
+      cursor: pointer;
+    }
+
+    .slider-ticks {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 0.72rem;
+      color: var(--text-light);
+    }
+
+    /* Button */
+    .btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(232, 97, 58, 0.3);
+      margin-top: 0.25rem;
+    }
+
+    .btn:hover {
+      background: var(--accent-light);
+      box-shadow: 0 6px 20px rgba(232, 97, 58, 0.4);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Error */
+    .error-msg {
+      background: #fff3f0;
+      border: 1px solid #ffd0c0;
+      color: var(--accent);
+      font-size: 0.84rem;
+      padding: 0.7rem 1rem;
+      border-radius: var(--radius);
+      margin-top: 1rem;
+    }
+
+    /* Results */
+    .results {
+      width: 100%;
+      max-width: 520px;
+      margin-top: 1.5rem;
+    }
+
+    .results-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      padding-left: 4px;
+    }
+
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 0.85rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .result-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent);
+      border-radius: 4px 0 0 4px;
+    }
+
+    .result-card.best::before {
+      background: var(--success);
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .result-term {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+
+    .result-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+
+    .badge-best {
+      background: #e8f5ee;
+      color: var(--success);
+    }
+
+    .badge-popular {
+      background: #fff3f0;
+      color: var(--accent);
+    }
+
+    .badge-short {
+      background: #eef3ff;
+      color: #3a5cc2;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.4rem 0;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .result-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .result-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .result-value.highlight {
+      font-size: 1.25rem;
+      color: var(--primary);
+    }
+
+    .result-value.interest {
+      color: var(--accent);
+    }
+
+    /* Animation */
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: slideUp 0.35s ease both;
+    }
+
+    .delay-1 {
+      animation-delay: 0.05s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.12s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.19s;
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      max-width: 520px;
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 1.5rem;
+      }
+
+      .result-card {
+        padding: 1.1rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body x-data="loanCalc()">
+
+  <div class="header">
+    <div class="header-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+      </svg>
+      Home Loan Calculator
+    </div>
+    <!-- <h1>How much Home Loan can<br>you afford?</h1>
+    <p>Enter your comfortable monthly EMI and we'll show you the loan amount you can afford across different loan terms.
+    </p> -->
+  </div>
+
+  <div class="card">
+    <!-- EMI Input -->
+    <div class="field">
+      <label>Monthly EMI Budget</label>
+      <div class="input-wrapper">
+        <span class="input-prefix">₹</span>
+        <input type="number" x-model.number="emi" placeholder="e.g. 25000" min="1000"
+          @input="results = null; error = ''" />
+      </div>
+    </div>
+
+    <!-- Interest Rate Slider -->
+    <div class="field">
+      <label>
+        Annual Interest Rate
+        <span class="value-badge" x-text="rate.toFixed(1) + '%'"></span>
+      </label>
+      <div class="slider-container">
+        <input type="range" x-model.number="rate" min="4" max="20" step="0.1" @input="results = null; error = ''"
+          :style="`--pct: ${((rate - 4) / 16) * 100}%`" />
+        <div class="slider-ticks">
+          <span>4%</span>
+          <span>8%</span>
+          <span>12%</span>
+          <span>16%</span>
+          <span>20%</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" @click="calculate()">
+      Calculate Loan Affordability →
+    </button>
+
+    <template x-if="error">
+      <div class="error-msg">⚠ <span x-text="error"></span></div>
+    </template>
+  </div>
+
+  <!-- Results -->
+  <template x-if="results">
+    <div class="results">
+      <div class="results-title">Loan amounts you can afford</div>
+      <div>
+      <template x-for="(r, i) in results" :key="r.years">
+        <div class="result-card animate-in" :class="{
+            'best': r.years === 30,
+            'delay-1': i === 0,
+            'delay-2': i === 1,
+            'delay-3': i === 2
+          }">
+          <div class="result-header">
+            <div class="result-term" x-text="r.years + '-Year Loan'"></div>
+            <span class="result-badge"
+              :class="r.years === 30 ? 'badge-best' : (r.years === 20 ? 'badge-popular' : 'badge-short')"
+              x-text="r.years === 30 ? 'Max Affordability' : (r.years === 20 ? 'Popular Choice' : 'Fastest Payoff')"></span>
+          </div>
+
+          <div class="result-row">
+            <span class="result-label">Loan Amount</span>
+            <span class="result-value highlight" x-text="fmt(r.principal)"></span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Total Amount Paid</span>
+            <span class="result-value" x-text="fmt(r.total)"></span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Total Interest</span>
+            <span class="result-value interest" x-text="fmt(r.interest) + ' (' + r.pct + '% extra)'"></span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Monthly EMI</span>
+            <span class="result-value" x-text="fmt(emi)"></span>
+          </div>
+        </div>
+      </template>
+      </div>
+    </div>
+  </template>
+
+  <p class="disclaimer">
+    * Calculations are approximate and for informational purposes only.<br>
+    Actual loan eligibility depends on income, credit score, and lender policies.
+  </p>
+
+  <script>
+    function loanCalc() {
+      return {
+        emi: null,
+        rate: 8.5,
+        results: null,
+        error: '',
+
+        calculate() {
+          this.error = '';
+          this.results = null;
+
+          if (!this.emi || this.emi <= 0) {
+            this.error = 'Please enter a valid monthly EMI amount.';
+            return;
+          }
+          if (this.emi < 1000) {
+            this.error = 'EMI should be at least ₹1,000.';
+            return;
+          }
+
+          const r = (this.rate / 100) / 12;
+          const terms = [30, 20, 10];
+
+          this.results = terms.map(years => {
+            const n = years * 12;
+            // Reverse EMI formula: P = EMI * [1 - (1+r)^-n] / r
+            const principal = Math.round(this.emi * (1 - Math.pow(1 + r, -n)) / r);
+            const total = Math.round(this.emi * n);
+            const interest = total - principal;
+            const pct = Math.round((interest / principal) * 100);
+            return { years, principal, total, interest, pct };
+          });
+        },
+
+        fmt(n) {
+          if (n >= 10000000) return '₹' + (n / 10000000).toFixed(2) + ' Cr';
+          if (n >= 100000) return '₹' + (n / 100000).toFixed(2) + ' L';
+          return '₹' + n.toLocaleString('en-IN');
+        }
+      }
+    }
+  </script>
+
+</body>
+
+</html>
