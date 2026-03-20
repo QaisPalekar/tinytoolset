@@ -1,510 +1,650 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Date Calculator</title>
-    <meta name="description" content="Calculate dates by adding or subtracting days, or find the difference between two dates." />
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: #f5f5f0;
-        min-height: 100vh;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        padding: 48px 16px 64px;
-        color: #1a1a1a;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Days Calculator — Add or Subtract Days from Any Date</title>
+  <meta name="description"
+    content="Add or subtract days from any date to find future or past dates. Supports natural language like 'today', 'next Friday', and more." />
+  <meta property="og:title" content="Days Calculator" />
+  <meta property="og:description"
+    content="Add or subtract days from any date to find future or past dates effortlessly." />
+  <meta property="og:type" content="website" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --surface-alt: #f9f8f5;
+      --border: #e2dfd8;
+      --primary: #1a3a5c;
+      --primary-light: #2a5080;
+      --accent: #e8613a;
+      --accent-light: #f5845e;
+      --text: #1c2b3a;
+      --text-muted: #6b7a8a;
+      --text-light: #9aa6b0;
+      --success: #2d7a4f;
+      --radius: 12px;
+      --radius-lg: 20px;
+      --shadow: 0 4px 24px rgba(26, 58, 92, 0.08);
+      --shadow-lg: 0 8px 40px rgba(26, 58, 92, 0.14);
+      --font-serif: 'Georgia', 'Times New Roman', serif;
+      --font: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      max-width: 540px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 1rem;
+    }
+
+    .header h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: normal;
+      color: var(--primary);
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 520px;
+      padding: 2rem;
+    }
+
+    /* Input group */
+    .field {
+      margin-bottom: 1.75rem;
+    }
+
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--surface-alt);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: var(--font);
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.1);
+    }
+
+    input[type="text"].is-valid {
+      border-color: var(--success);
+    }
+
+    input[type="text"].is-invalid {
+      border-color: var(--accent);
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--surface-alt);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+      font-family: var(--font);
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.1);
+    }
+
+    .resolved-feedback {
+      margin-top: 5px;
+      font-size: 0.76rem;
+      color: var(--success);
+      font-weight: 500;
+      min-height: 1.1em;
+      transition: opacity 0.15s;
+    }
+
+    .resolved-feedback.error {
+      color: var(--accent);
+    }
+
+    .hint {
+      margin-top: 0.5rem;
+      font-size: 0.74rem;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    .hint em {
+      font-style: normal;
+      color: var(--text-muted);
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.9rem;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      font-family: var(--font);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-add {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(232, 97, 58, 0.3);
+    }
+
+    .btn-add:not(:disabled):hover {
+      background: var(--accent-light);
+      box-shadow: 0 6px 20px rgba(232, 97, 58, 0.4);
+    }
+
+    .btn-subtract {
+      background: var(--surface-alt);
+      color: var(--primary);
+      border: 2px solid var(--border);
+    }
+
+    .btn-subtract:not(:disabled):hover {
+      background: var(--border);
+    }
+
+    /* Results */
+    .results {
+      width: 100%;
+      max-width: 520px;
+      margin-top: 1.5rem;
+    }
+
+    .results-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      padding-left: 4px;
+    }
+
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.6rem 1.8rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .result-card.added::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--success);
+      border-radius: 4px 0 0 4px;
+    }
+
+    .result-card.subtracted::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent);
+      border-radius: 4px 0 0 4px;
+    }
+
+    .result-date-big {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .result-iso {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .result-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+
+    .tag-add {
+      background: #e8f5ee;
+      color: var(--success);
+    }
+
+    .tag-sub {
+      background: #fff3f0;
+      color: var(--accent);
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.4rem 0;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .result-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .result-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      max-width: 520px;
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* Animation */
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
       }
 
-      .page {
-        width: 100%;
-        max-width: 520px;
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
 
-      .page-title {
-        text-align: center;
-        font-size: 1.125rem;
-        font-weight: 600;
-        letter-spacing: -0.01em;
-        color: #1a1a1a;
-      }
+    .animate-in {
+      animation: slideUp 0.35s ease both;
+    }
 
+    .delay-1 {
+      animation-delay: 0.05s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.12s;
+    }
+
+    @media (max-width: 420px) {
       .card {
-        background: #fff;
-        border-radius: 16px;
-        padding: 28px;
-        box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
-        border: 1px solid #ebebeb;
+        padding: 1.5rem;
       }
 
-      .card-label {
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: #999;
-        margin-bottom: 18px;
+      .result-card {
+        padding: 1.1rem 1.2rem;
       }
+    }
+  </style>
+</head>
 
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-bottom: 16px;
-      }
+<body x-data="dateCalc()">
 
-      label {
-        font-size: 0.8125rem;
-        font-weight: 500;
-        color: #555;
-      }
+  <div class="header animate-in">
+    <div class="header-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM12 13h5v5h-5z" />
+      </svg>
+      Days Calculator
+    </div>
+  </div>
 
-      .nl-wrap {
-        position: relative;
-      }
+  <div class="card animate-in delay-1">
+    <!-- Start Date -->
+    <div class="field">
+      <label>Start Date</label>
+      <input :class="{ 'is-valid': resolvedDate, 'is-invalid': nlInput && !resolvedDate }" type="text"
+        x-model="nlInput" @input="parseNL()" placeholder="today, next Monday, Mar 15, 2025-03-15…"
+        autocomplete="off" spellcheck="false" />
+      <p class="resolved-feedback" :class="{ error: nlInput && !resolvedDate }" x-text="nlFeedback"></p>
+      <p class="hint">Try: <em>today · tomorrow · yesterday · next Friday · in 10 days · 3 weeks ago · Jan 5 ·
+          2026-06-01</em></p>
+    </div>
 
-      .nl-input {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1.5px solid #e0e0e0;
-        border-radius: 10px;
-        font-size: 0.9375rem;
-        font-family: inherit;
-        color: #1a1a1a;
-        background: #fafafa;
-        outline: none;
-        transition: border-color 0.15s, box-shadow 0.15s;
-      }
+    <!-- Number of Days -->
+    <div class="field" style="margin-bottom: 0">
+      <label>Number of Days</label>
+      <input type="number" x-model="days" min="1" placeholder="e.g. 30" />
+    </div>
 
-      .nl-input:focus {
-        border-color: #1a1a1a;
-        box-shadow: 0 0 0 3px rgba(26,26,26,0.07);
-        background: #fff;
-      }
+    <div class="btn-row">
+      <button class="btn btn-add" @click="calc('add')" :disabled="!canCalc">＋ Add Days</button>
+      <button class="btn btn-subtract" @click="calc('sub')" :disabled="!canCalc">－ Subtract Days</button>
+    </div>
+  </div>
 
-      .nl-input.is-valid { border-color: #2d7a3e; }
-      .nl-input.is-invalid { border-color: #c0392b; }
+  <!-- Results -->
+  <template x-if="result">
+    <div class="results animate-in delay-2">
+      <div class="results-title">Result</div>
+      <div class="result-card" :class="operation === 'add' ? 'added' : 'subtracted'">
+        <div class="result-date-big" x-text="resultFormatted"></div>
+        <div class="result-iso" x-text="isoResult"></div>
+        <span class="result-tag" :class="operation === 'add' ? 'tag-add' : 'tag-sub'"
+          x-text="operation === 'add' ? '+' + days + ' days' : '−' + days + ' days'"></span>
 
-      .nl-resolved {
-        margin-top: 5px;
-        font-size: 0.78rem;
-        color: #2d7a3e;
-        font-weight: 500;
-        min-height: 1.1em;
-        transition: opacity 0.15s;
-      }
-
-      .nl-resolved.error { color: #c0392b; }
-
-      .nl-hint {
-        margin-top: 6px;
-        font-size: 0.72rem;
-        color: #aaa;
-        line-height: 1.5;
-      }
-
-      input[type="number"] {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1.5px solid #e0e0e0;
-        border-radius: 10px;
-        font-size: 0.9375rem;
-        font-family: inherit;
-        color: #1a1a1a;
-        background: #fafafa;
-        outline: none;
-        transition: border-color 0.15s, box-shadow 0.15s;
-        -webkit-appearance: none;
-        appearance: none;
-      }
-
-      input[type="number"]:focus {
-        border-color: #1a1a1a;
-        box-shadow: 0 0 0 3px rgba(26,26,26,0.07);
-        background: #fff;
-      }
-
-      input[type="number"]::-webkit-inner-spin-button,
-      input[type="number"]::-webkit-outer-spin-button { opacity: 1; }
-
-      .btn-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 20px;
-      }
-
-      .btn {
-        padding: 11px 16px;
-        border-radius: 10px;
-        font-size: 0.875rem;
-        font-weight: 600;
-        font-family: inherit;
-        cursor: pointer;
-        border: none;
-        transition: opacity 0.15s, transform 0.1s;
-        letter-spacing: -0.01em;
-      }
-      .btn:active { transform: scale(0.97); }
-      .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-      .btn-add { background: #1a1a1a; color: #fff; }
-      .btn-add:not(:disabled):hover { opacity: 0.85; }
-
-      .btn-sub { background: #f0f0ee; color: #1a1a1a; border: 1.5px solid #e0e0e0; }
-      .btn-sub:not(:disabled):hover { background: #e8e8e6; }
-
-      .result-box {
-        margin-top: 20px;
-        padding: 16px 18px;
-        border-radius: 10px;
-        background: #f5f5f0;
-        border: 1.5px solid #e8e8e4;
-        animation: fadeIn 0.25s ease;
-      }
-
-      .result-label {
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
-        color: #aaa;
-        margin-bottom: 4px;
-      }
-
-      .result-date {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        letter-spacing: -0.02em;
-      }
-
-      .result-sub {
-        font-size: 0.8125rem;
-        color: #888;
-        margin-top: 3px;
-      }
-
-      .tag {
-        display: inline-block;
-        font-size: 0.6875rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        padding: 3px 8px;
-        border-radius: 6px;
-        margin-top: 8px;
-      }
-      .tag-add { background: #e6f4ea; color: #2d7a3e; }
-      .tag-sub { background: #fdecea; color: #c0392b; }
-
-      .diff-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-
-      .diff-result {
-        margin-top: 20px;
-        padding: 16px 18px;
-        border-radius: 10px;
-        background: #f5f5f0;
-        border: 1.5px solid #e8e8e4;
-        animation: fadeIn 0.25s ease;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .diff-number {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #1a1a1a;
-        letter-spacing: -0.04em;
-        line-height: 1;
-      }
-
-      .diff-text { font-size: 0.8125rem; color: #888; line-height: 1.4; }
-      .diff-text strong {
-        display: block;
-        font-size: 0.9375rem;
-        font-weight: 600;
-        color: #1a1a1a;
-        letter-spacing: -0.01em;
-      }
-
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(4px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-
-      @media (max-width: 400px) {
-        .card { padding: 20px; }
-        .diff-row { grid-template-columns: 1fr; }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="page">
-      <p class="page-title">Date Calculator</p>
-
-      <!-- Section 1: Add / Subtract Days -->
-      <div class="card" x-data="dateCalc()">
-        <p class="card-label">Add or Subtract Days</p>
-
-        <div class="field">
-          <label>Start Date</label>
-          <div class="nl-wrap">
-            <input
-              class="nl-input"
-              :class="{ 'is-valid': resolvedDate, 'is-invalid': nlInput && !resolvedDate }"
-              type="text"
-              x-model="nlInput"
-              @input="parseNL()"
-              placeholder="today, next Monday, Mar 15, 2025-03-15…"
-              autocomplete="off"
-              spellcheck="false"
-            />
-            <p class="nl-resolved" :class="{ error: nlInput && !resolvedDate }" x-text="nlFeedback"></p>
+        <div style="margin-top: 1rem;">
+          <div class="result-row">
+            <span class="result-label">Start Date</span>
+            <span class="result-value" x-text="startFormatted"></span>
           </div>
-          <p class="nl-hint">Try: <em>today · tomorrow · yesterday · next Friday · in 10 days · 3 weeks ago · Jan 5 · 2026-06-01</em></p>
-        </div>
-
-        <div class="field" style="margin-bottom:0">
-          <label>Number of Days</label>
-          <input type="number" x-model="days" min="1" placeholder="e.g. 30" />
-        </div>
-
-        <div class="btn-row">
-          <button class="btn btn-add" @click="calc('add')" :disabled="!canCalc">＋ Add Days</button>
-          <button class="btn btn-sub" @click="calc('sub')" :disabled="!canCalc">－ Subtract Days</button>
-        </div>
-
-        <div class="result-box" x-show="result" x-cloak>
-          <p class="result-label">Result</p>
-          <p class="result-date" x-text="resultFormatted"></p>
-          <p class="result-sub" x-text="isoResult"></p>
-          <span class="tag" :class="operation === 'add' ? 'tag-add' : 'tag-sub'"
-            x-text="operation === 'add' ? '+' + days + ' days' : '−' + days + ' days'"></span>
+          <div class="result-row">
+            <span class="result-label">Operation</span>
+            <span class="result-value"
+              x-text="operation === 'add' ? 'Added ' + days + ' days' : 'Subtracted ' + days + ' days'"></span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Result Date</span>
+            <span class="result-value" x-text="resultShort"></span>
+          </div>
         </div>
       </div>
     </div>
+  </template>
 
-    <script>
-      // ─── Natural language date parser ───────────────────────────────────────
-      const WEEKDAYS = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
-      const MONTHS   = ['january','february','march','april','may','june',
-                        'july','august','september','october','november','december'];
-      const MONTH_SHORT = MONTHS.map(m => m.slice(0, 3));
+  <p class="disclaimer">
+    * Dates are parsed using natural language. All calculations are based on calendar days.
+  </p>
 
-      function today() {
-        const d = new Date(); d.setHours(0,0,0,0); return d;
-      }
+  <script>
+    // ─── Natural language date parser ───────────────────────────────────────
+    const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
+      'july', 'august', 'september', 'october', 'november', 'december'];
+    const MONTH_SHORT = MONTHS.map(m => m.slice(0, 3));
 
-      function dateToISO(d) {
-        return d.toISOString().split('T')[0];
-      }
+    function today() {
+      const d = new Date(); d.setHours(0, 0, 0, 0); return d;
+    }
 
-      function friendlyDate(d) {
-        return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      }
+    function dateToISO(d) {
+      return d.toISOString().split('T')[0];
+    }
 
-      function parseNaturalDate(raw) {
-        if (!raw || !raw.trim()) return null;
-        const s = raw.trim().toLowerCase().replace(/,/g, '');
+    function friendlyDate(d) {
+      return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
 
-        // today / tomorrow / yesterday
-        if (s === 'today' || s === 'now')     { return today(); }
-        if (s === 'tomorrow')                 { const d = today(); d.setDate(d.getDate()+1); return d; }
-        if (s === 'yesterday')                { const d = today(); d.setDate(d.getDate()-1); return d; }
+    function shortDate(d) {
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
 
-        // next / last weekday — "next monday", "last friday"
-        const nextDay = s.match(/^next\s+(\w+)$/);
-        if (nextDay) {
-          const wi = WEEKDAYS.indexOf(nextDay[1]);
-          if (wi !== -1) {
-            const d = today();
-            const diff = ((wi - d.getDay() + 7) % 7) || 7;
-            d.setDate(d.getDate() + diff);
-            return d;
-          }
-        }
-        const lastDay = s.match(/^last\s+(\w+)$/);
-        if (lastDay) {
-          const wi = WEEKDAYS.indexOf(lastDay[1]);
-          if (wi !== -1) {
-            const d = today();
-            const diff = ((d.getDay() - wi + 7) % 7) || 7;
-            d.setDate(d.getDate() - diff);
-            return d;
-          }
-        }
+    function parseNaturalDate(raw) {
+      if (!raw || !raw.trim()) return null;
+      const s = raw.trim().toLowerCase().replace(/,/g, '');
 
-        // bare weekday name — "monday", "friday" → the coming occurrence
-        if (WEEKDAYS.includes(s)) {
-          const wi = WEEKDAYS.indexOf(s);
+      if (s === 'today' || s === 'now') { return today(); }
+      if (s === 'tomorrow') { const d = today(); d.setDate(d.getDate() + 1); return d; }
+      if (s === 'yesterday') { const d = today(); d.setDate(d.getDate() - 1); return d; }
+
+      const nextDay = s.match(/^next\s+(\w+)$/);
+      if (nextDay) {
+        const wi = WEEKDAYS.indexOf(nextDay[1]);
+        if (wi !== -1) {
           const d = today();
           const diff = ((wi - d.getDay() + 7) % 7) || 7;
           d.setDate(d.getDate() + diff);
           return d;
         }
-
-        // "in X days/weeks/months" and "X days/weeks/months ago"
-        const inM  = s.match(/^in\s+(\d+)\s+(day|days|week|weeks|month|months)$/);
-        const agoM = s.match(/^(\d+)\s+(day|days|week|weeks|month|months)\s+ago$/);
-        const rel  = inM || agoM;
-        if (rel) {
-          const n = parseInt(rel[1], 10);
-          const unit = rel[2];
-          const sign = inM ? 1 : -1;
+      }
+      const lastDay = s.match(/^last\s+(\w+)$/);
+      if (lastDay) {
+        const wi = WEEKDAYS.indexOf(lastDay[1]);
+        if (wi !== -1) {
           const d = today();
-          if (unit.startsWith('day'))   d.setDate(d.getDate() + sign * n);
-          if (unit.startsWith('week'))  d.setDate(d.getDate() + sign * n * 7);
-          if (unit.startsWith('month')) d.setMonth(d.getMonth() + sign * n);
+          const diff = ((d.getDay() - wi + 7) % 7) || 7;
+          d.setDate(d.getDate() - diff);
           return d;
         }
+      }
 
-        // next/last week/month
-        if (s === 'next week')  { const d = today(); d.setDate(d.getDate()+7);  return d; }
-        if (s === 'last week')  { const d = today(); d.setDate(d.getDate()-7);  return d; }
-        if (s === 'next month') { const d = today(); d.setMonth(d.getMonth()+1); return d; }
-        if (s === 'last month') { const d = today(); d.setMonth(d.getMonth()-1); return d; }
-        if (s === 'next year')  { const d = today(); d.setFullYear(d.getFullYear()+1); return d; }
-        if (s === 'last year')  { const d = today(); d.setFullYear(d.getFullYear()-1); return d; }
+      if (WEEKDAYS.includes(s)) {
+        const wi = WEEKDAYS.indexOf(s);
+        const d = today();
+        const diff = ((wi - d.getDay() + 7) % 7) || 7;
+        d.setDate(d.getDate() + diff);
+        return d;
+      }
 
-        // "end of month" / "start of month"
-        if (s === 'end of month') {
-          const d = today(); d.setMonth(d.getMonth()+1, 0); return d;
-        }
-        if (s === 'start of month' || s === 'beginning of month') {
-          const d = today(); d.setDate(1); return d;
-        }
+      const inM = s.match(/^in\s+(\d+)\s+(day|days|week|weeks|month|months)$/);
+      const agoM = s.match(/^(\d+)\s+(day|days|week|weeks|month|months)\s+ago$/);
+      const rel = inM || agoM;
+      if (rel) {
+        const n = parseInt(rel[1], 10);
+        const unit = rel[2];
+        const sign = inM ? 1 : -1;
+        const d = today();
+        if (unit.startsWith('day')) d.setDate(d.getDate() + sign * n);
+        if (unit.startsWith('week')) d.setDate(d.getDate() + sign * n * 7);
+        if (unit.startsWith('month')) d.setMonth(d.getMonth() + sign * n);
+        return d;
+      }
 
-        // ISO: 2025-03-15
-        if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)) {
-          const d = new Date(s + 'T00:00:00');
+      if (s === 'next week') { const d = today(); d.setDate(d.getDate() + 7); return d; }
+      if (s === 'last week') { const d = today(); d.setDate(d.getDate() - 7); return d; }
+      if (s === 'next month') { const d = today(); d.setMonth(d.getMonth() + 1); return d; }
+      if (s === 'last month') { const d = today(); d.setMonth(d.getMonth() - 1); return d; }
+      if (s === 'next year') { const d = today(); d.setFullYear(d.getFullYear() + 1); return d; }
+      if (s === 'last year') { const d = today(); d.setFullYear(d.getFullYear() - 1); return d; }
+
+      if (s === 'end of month') {
+        const d = today(); d.setMonth(d.getMonth() + 1, 0); return d;
+      }
+      if (s === 'start of month' || s === 'beginning of month') {
+        const d = today(); d.setDate(1); return d;
+      }
+
+      if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)) {
+        const d = new Date(s + 'T00:00:00');
+        return isNaN(d) ? null : d;
+      }
+
+      const mdy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+      if (mdy) {
+        let y = parseInt(mdy[3]); if (y < 100) y += 2000;
+        const d = new Date(y, parseInt(mdy[1]) - 1, parseInt(mdy[2]));
+        return isNaN(d) ? null : d;
+      }
+
+      const moIdx = (tok) => {
+        const t = tok.toLowerCase();
+        const fi = MONTHS.findIndex(m => m === t || m.slice(0, 3) === t);
+        return fi;
+      };
+
+      const toks = s.split(/\s+/);
+      if (toks.length >= 2) {
+        let mi = -1, day = null, year = null;
+        mi = moIdx(toks[0]);
+        if (mi !== -1 && /^\d{1,2}$/.test(toks[1])) {
+          day = parseInt(toks[1]);
+          year = toks[2] ? parseInt(toks[2]) : today().getFullYear();
+          const d = new Date(year, mi, day);
           return isNaN(d) ? null : d;
         }
-
-        // MM/DD/YYYY or MM/DD/YY or MM-DD-YYYY
-        const mdy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
-        if (mdy) {
-          let y = parseInt(mdy[3]); if (y < 100) y += 2000;
-          const d = new Date(y, parseInt(mdy[1])-1, parseInt(mdy[2]));
+        mi = moIdx(toks[1]);
+        if (mi !== -1 && /^\d{1,2}$/.test(toks[0])) {
+          day = parseInt(toks[0]);
+          year = toks[2] ? parseInt(toks[2]) : today().getFullYear();
+          const d = new Date(year, mi, day);
           return isNaN(d) ? null : d;
         }
-
-        // Month name formats: "Jan 5", "January 5", "Jan 5 2026", "5 Jan 2026"
-        const moIdx = (tok) => {
-          const t = tok.toLowerCase();
-          const fi = MONTHS.findIndex(m => m === t || m.slice(0,3) === t);
-          return fi; // -1 if not found
-        };
-
-        const toks = s.split(/\s+/);
-        if (toks.length >= 2) {
-          let mi = -1, day = null, year = null;
-          // "Jan 5", "Jan 5 2026"
-          mi = moIdx(toks[0]);
-          if (mi !== -1 && /^\d{1,2}$/.test(toks[1])) {
-            day = parseInt(toks[1]);
-            year = toks[2] ? parseInt(toks[2]) : today().getFullYear();
-            const d = new Date(year, mi, day);
-            return isNaN(d) ? null : d;
-          }
-          // "5 Jan 2026" or "5 Jan"
-          mi = moIdx(toks[1]);
-          if (mi !== -1 && /^\d{1,2}$/.test(toks[0])) {
-            day = parseInt(toks[0]);
-            year = toks[2] ? parseInt(toks[2]) : today().getFullYear();
-            const d = new Date(year, mi, day);
-            return isNaN(d) ? null : d;
-          }
-        }
-
-        // Single number: treat as day of this month
-        if (/^\d{1,2}$/.test(s)) {
-          const d = today();
-          d.setDate(parseInt(s));
-          return isNaN(d.getTime()) ? null : d;
-        }
-
-        return null;
       }
 
-      // ─── Alpine component: Add / Subtract ───────────────────────────────────
-      function dateCalc() {
-        return {
-          nlInput: 'today',
-          days: 7,
-          resolvedDate: null,
-          nlFeedback: '',
-          result: null,
-          operation: null,
-          init() { this.parseNL(); },
-          parseNL() {
-            const d = parseNaturalDate(this.nlInput);
-            this.resolvedDate = d;
-            this.nlFeedback = d
-              ? '→ ' + friendlyDate(d)
-              : (this.nlInput ? 'Can\'t parse — try "tomorrow" or "2025-06-01"' : '');
-          },
-          get canCalc() {
-            return this.resolvedDate && this.days !== '' && Number(this.days) > 0;
-          },
-          calc(op) {
-            if (!this.canCalc) return;
-            const base = new Date(this.resolvedDate);
-            const offset = op === 'add' ? Number(this.days) : -Number(this.days);
-            base.setDate(base.getDate() + offset);
-            this.result = base;
-            this.operation = op;
-          },
-          get resultFormatted() { return this.result ? friendlyDate(this.result) : ''; },
-          get isoResult() { return this.result ? dateToISO(this.result) : ''; }
-        };
+      if (/^\d{1,2}$/.test(s)) {
+        const d = today();
+        d.setDate(parseInt(s));
+        return isNaN(d.getTime()) ? null : d;
       }
 
-      // ─── Alpine component: Difference ───────────────────────────────────────
-      function dateDiff() {
-        return {
-          inputA: 'today',
-          inputB: 'in 30 days',
-          resolvedA: null,
-          resolvedB: null,
-          feedbackA: '',
-          feedbackB: '',
-          init() { this.parseA(); this.parseB(); },
-          parseA() {
-            const d = parseNaturalDate(this.inputA);
-            this.resolvedA = d;
-            this.feedbackA = d ? '→ ' + friendlyDate(d) : (this.inputA ? 'Can\'t parse' : '');
-          },
-          parseB() {
-            const d = parseNaturalDate(this.inputB);
-            this.resolvedB = d;
-            this.feedbackB = d ? '→ ' + friendlyDate(d) : (this.inputB ? 'Can\'t parse' : '');
-          },
-          get diff() {
-            if (!this.resolvedA || !this.resolvedB) return null;
-            return Math.round((this.resolvedB - this.resolvedA) / 86400000);
-          },
-          get absDiff() { return Math.abs(this.diff); },
-          get diffLabel() {
-            const d = this.diff;
-            if (d === null) return '';
-            if (d === 0) return 'Same day';
-            return d > 0 ? 'Date B is after Date A' : 'Date B is before Date A';
-          }
-        };
-      }
-    </script>
-  </body>
+      return null;
+    }
+
+    // ─── Alpine component: Add / Subtract ───────────────────────────────────
+    function dateCalc() {
+      return {
+        nlInput: 'today',
+        days: 7,
+        resolvedDate: null,
+        nlFeedback: '',
+        result: null,
+        operation: null,
+        init() { this.parseNL(); },
+        parseNL() {
+          const d = parseNaturalDate(this.nlInput);
+          this.resolvedDate = d;
+          this.nlFeedback = d
+            ? '→ ' + friendlyDate(d)
+            : (this.nlInput ? 'Can\'t parse — try "tomorrow" or "2025-06-01"' : '');
+        },
+        get canCalc() {
+          return this.resolvedDate && this.days !== '' && Number(this.days) > 0;
+        },
+        calc(op) {
+          if (!this.canCalc) return;
+          const base = new Date(this.resolvedDate);
+          const offset = op === 'add' ? Number(this.days) : -Number(this.days);
+          base.setDate(base.getDate() + offset);
+          this.result = base;
+          this.operation = op;
+        },
+        get resultFormatted() { return this.result ? friendlyDate(this.result) : ''; },
+        get isoResult() { return this.result ? dateToISO(this.result) : ''; },
+        get startFormatted() { return this.resolvedDate ? shortDate(this.resolvedDate) : ''; },
+        get resultShort() { return this.result ? shortDate(this.result) : ''; }
+      };
+    }
+  </script>
+
+</body>
+
 </html>

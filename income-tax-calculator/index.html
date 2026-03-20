@@ -1,209 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>India Tax Calculator – New Regime FY 2025-26</title>
-  <meta name="description" content="Calculate your income tax under India's New Tax Regime for FY 2025-26. Get instant yearly and monthly breakdown with effective rate." />
+  <title>Income Tax Calculator — New Regime FY 2025-26</title>
+  <meta name="description"
+    content="Calculate your income tax under India's New Tax Regime for FY 2025-26. Get instant yearly and monthly breakdown with effective rate." />
   <meta property="og:title" content="India New Regime Tax Calculator FY 2025-26" />
-  <meta property="og:description" content="Instant income tax calculator under New Regime. Yearly &amp; monthly breakdown with effective rate." />
+  <meta property="og:description"
+    content="Instant income tax calculator under New Regime. Yearly & monthly breakdown with effective rate." />
   <meta property="og:type" content="website" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     :root {
-      --bg:          #F8FAFC;
-      --surface:     #FFFFFF;
-      --border:      #E2E8F0;
-      --slate:       #0F172A;
-      --slate-mid:   #334155;
-      --slate-soft:  #64748B;
-      --green:       #10B981;
-      --green-bg:    #ECFDF5;
-      --green-ring:  #6EE7B7;
-      --blue:        #3B82F6;
-      --blue-bg:     #EFF6FF;
-      --red:         #EF4444;
-      --red-bg:      #FEF2F2;
-      --radius:      14px;
-      --shadow:      0 1px 3px rgba(15,23,42,.07), 0 4px 16px rgba(15,23,42,.06);
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --surface-alt: #f9f8f5;
+      --border: #e2dfd8;
+      --primary: #1a3a5c;
+      --primary-light: #2a5080;
+      --accent: #e8613a;
+      --accent-light: #f5845e;
+      --text: #1c2b3a;
+      --text-muted: #6b7a8a;
+      --text-light: #9aa6b0;
+      --success: #2d7a4f;
+      --success-bg: #e8f5ee;
+      --danger-bg: #fff3f0;
+      --radius: 12px;
+      --radius-lg: 20px;
+      --shadow: 0 4px 24px rgba(26, 58, 92, 0.08);
+      --shadow-lg: 0 8px 40px rgba(26, 58, 92, 0.14);
+      --font-serif: 'Georgia', 'Times New Roman', serif;
+      --font: system-ui, -apple-system, sans-serif;
     }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font);
       background: var(--bg);
-      color: var(--slate);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px 16px 64px;
+      padding: 2rem 1rem 4rem;
     }
 
-    /* ── Header ─────────────────────────── */
-    .header { text-align: center; margin-bottom: 32px; }
-    .header .badge {
-      display: inline-block;
-      background: var(--blue-bg);
-      color: var(--blue);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: 100px;
-      margin-bottom: 14px;
-    }
-    .header h1 {
-      font-size: 28px;
-      font-weight: 800;
-      color: var(--slate);
-      line-height: 1.2;
-    }
-    .header p {
-      margin-top: 8px;
-      font-size: 14px;
-      color: var(--slate-soft);
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      max-width: 540px;
     }
 
-    /* ── Card ───────────────────────────── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      width: 100%;
-      max-width: 600px;
-      overflow: hidden;
-    }
-
-    /* ── Input Section ──────────────────── */
-    .input-section { padding: 28px 28px 24px; }
-    .input-label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      color: var(--slate-soft);
-      margin-bottom: 10px;
-    }
-    .input-wrap {
-      display: flex;
-      align-items: center;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      transition: border-color .15s;
-    }
-    .input-wrap:focus-within {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
-    }
-    .input-prefix {
-      background: #F1F5F9;
-      border-right: 1.5px solid var(--border);
-      padding: 14px 16px;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--slate-mid);
-      user-select: none;
-    }
-    .salary-input {
-      flex: 1;
-      border: none;
-      outline: none;
-      padding: 14px 16px;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--slate);
-      font-family: 'Inter', sans-serif;
-      background: transparent;
-    }
-    .salary-input::placeholder { color: #CBD5E1; font-weight: 400; font-size: 18px; }
-    /* hide number spinner */
-    .salary-input::-webkit-outer-spin-button,
-    .salary-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    .salary-input[type=number] { -moz-appearance: textfield; }
-
-    .input-hint {
-      margin-top: 8px;
-      font-size: 12px;
-      color: var(--slate-soft);
-      display: flex;
+    .header-badge {
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-    }
-    .input-hint .formatted {
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.72rem;
       font-weight: 600;
-      color: var(--slate-mid);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 1rem;
     }
 
-    /* ── Divider ───────────────────────── */
-    .divider { height: 1px; background: var(--border); }
+    /* Card */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 520px;
+      padding: 2rem;
+    }
 
-    /* ── Results ────────────────────────── */
-    .results-section { padding: 24px 28px; }
+    /* Input group */
+    .field {
+      margin-bottom: 1.75rem;
+    }
+
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-prefix {
+      position: absolute;
+      left: 14px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 2.2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--surface-alt);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+      font-family: var(--font);
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.1);
+    }
+
+    .input-hint {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .input-hint strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* Slab toggle */
+    .slab-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      margin-top: 0.25rem;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .slab-toggle-btn:hover {
+      background: var(--surface-alt);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* Slab table */
+    .slab-table-wrap {
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .slab-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .slab-table th {
+      background: var(--surface-alt);
+      padding: 9px 14px;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .slab-table td {
+      padding: 9px 14px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .slab-table tr.active-slab td {
+      background: #eef3ff;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .slab-table .rate-cell {
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .note {
+      font-size: 0.74rem;
+      color: var(--text-light);
+      margin-top: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .note strong {
+      color: var(--text-muted);
+    }
+
+    /* Error */
+    .error-msg {
+      background: #fff3f0;
+      border: 1px solid #ffd0c0;
+      color: var(--accent);
+      font-size: 0.84rem;
+      padding: 0.7rem 1rem;
+      border-radius: var(--radius);
+      margin-top: 1rem;
+    }
+
+    /* Results */
+    .results {
+      width: 100%;
+      max-width: 520px;
+      margin-top: 1.5rem;
+    }
+
+    .results-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      padding-left: 4px;
+    }
+
     .results-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 0.85rem;
     }
 
-    .stat-card {
-      background: var(--bg);
+    .result-card {
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 18px;
+      border-radius: var(--radius-lg);
+      padding: 1.2rem 1.4rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
     }
-    .stat-card.green { background: var(--green-bg); border-color: var(--green-ring); }
-    .stat-card.red   { background: var(--red-bg);   border-color: #FECACA; }
+
+    .result-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .result-card.green {
+      background: var(--success-bg);
+      border-color: #b8dfc9;
+    }
+
+    .result-card.green::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--success);
+      border-radius: 4px 0 0 4px;
+    }
+
+    .result-card.red {
+      background: var(--danger-bg);
+      border-color: #ffd0c0;
+    }
+
+    .result-card.red::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent);
+      border-radius: 4px 0 0 4px;
+    }
 
     .stat-label {
-      font-size: 11px;
+      font-size: 0.72rem;
       font-weight: 600;
-      letter-spacing: .06em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--slate-soft);
-      margin-bottom: 6px;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
       display: flex;
       align-items: center;
       gap: 5px;
     }
-    .stat-card.green .stat-label { color: #059669; }
-    .stat-card.red   .stat-label { color: #DC2626; }
 
-    .stat-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .result-card.green .stat-label {
+      color: var(--success);
+    }
 
-    .stat-value { font-size: 20px; font-weight: 700; color: var(--slate); }
-    .stat-card.green .stat-value { color: #065F46; }
-    .stat-card.red   .stat-value { color: #991B1B; }
+    .result-card.red .stat-label {
+      color: var(--accent);
+    }
 
-    .stat-sub { margin-top: 3px; font-size: 12px; color: var(--slate-soft); }
-    .stat-card.green .stat-sub { color: #34D399; }
-    .stat-card.red   .stat-sub { color: #FCA5A5; }
+    .stat-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
 
-    /* ── Pie Chart Section ──────────────── */
-    .chart-section {
-      background: var(--slate);
-      border-radius: 0 0 var(--radius) var(--radius);
-      padding: 24px 28px 28px;
+    .stat-value {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+
+    .result-card.green .stat-value {
+      color: #1a5c3a;
+    }
+
+    .result-card.red .stat-value {
+      color: #8b2a1a;
+    }
+
+    .stat-sub {
+      margin-top: 2px;
+      font-size: 0.74rem;
+      color: var(--text-light);
+    }
+
+    .result-card.green .stat-sub {
+      color: #4aba72;
+    }
+
+    .result-card.red .stat-sub {
+      color: var(--accent-light);
+    }
+
+    /* Chart Section */
+    .chart-card {
+      background: var(--primary);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.8rem;
+      margin-top: 0.85rem;
       display: flex;
       align-items: center;
-      gap: 28px;
+      gap: 1.5rem;
+      box-shadow: var(--shadow);
     }
+
     .chart-wrap {
       position: relative;
-      width: 130px;
-      height: 130px;
+      width: 120px;
+      height: 120px;
       flex-shrink: 0;
     }
+
     .chart-center-label {
       position: absolute;
       inset: 0;
@@ -213,266 +399,285 @@
       justify-content: center;
       pointer-events: none;
     }
+
     .chart-center-rate {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--green);
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      color: #4aba72;
       line-height: 1;
     }
+
     .chart-center-sub {
-      font-size: 9px;
+      font-size: 0.58rem;
       font-weight: 600;
-      letter-spacing: .05em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: #64748B;
+      color: var(--text-light);
       margin-top: 3px;
     }
+
     .chart-legend {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 1rem;
     }
+
     .legend-item {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .legend-dot {
       width: 10px;
       height: 10px;
       border-radius: 3px;
       flex-shrink: 0;
     }
-    .legend-dot.take-home { background: var(--green); }
-    .legend-dot.tax       { background: #EF4444; }
-    .legend-info { flex: 1; }
-    .legend-label { font-size: 11px; font-weight: 500; color: #94A3B8; }
-    .legend-value { font-size: 15px; font-weight: 700; color: #F1F5F9; margin-top: 1px; }
-    .legend-pct   { font-size: 11px; color: #64748B; }
 
-    @media (max-width: 480px) {
-      .chart-section { flex-direction: column; align-items: center; padding: 20px 18px 24px; }
-      .chart-legend  { flex-direction: row; justify-content: center; gap: 20px; }
+    .legend-dot.take-home {
+      background: #4aba72;
     }
 
-    /* ── Empty state ────────────────────── */
-    .empty-state {
-      padding: 32px 28px;
-      text-align: center;
-      color: var(--slate-soft);
-      font-size: 14px;
+    .legend-dot.tax {
+      background: var(--accent);
     }
-    .empty-state svg { margin-bottom: 12px; opacity: .35; }
 
-    /* ── Slab info ──────────────────────── */
-    .slab-toggle-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--slate-soft);
-      font-family: 'Inter', sans-serif;
-      font-size: 12px;
+    .legend-info {
+      flex: 1;
+    }
+
+    .legend-label {
+      font-size: 0.68rem;
       font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 18px;
-      transition: background .15s, color .15s, border-color .15s;
+      color: var(--text-light);
     }
-    .slab-toggle-btn:hover { background: var(--bg); color: var(--blue); border-color: var(--blue); }
 
-    .slab-table-wrap {
-      margin-top: 14px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
+    .legend-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-top: 1px;
     }
-    .slab-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .slab-table th {
-      background: #F1F5F9;
-      padding: 9px 14px;
-      text-align: left;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      color: var(--slate-soft);
+
+    .legend-pct {
+      font-size: 0.68rem;
+      color: var(--text-light);
     }
-    .slab-table td { padding: 9px 14px; border-top: 1px solid var(--border); color: var(--slate-mid); }
-    .slab-table tr.active-slab td { background: #EFF6FF; color: var(--blue); font-weight: 600; }
-    .slab-table .rate-cell { font-weight: 700; text-align: right; }
 
-    .note { font-size: 11.5px; color: var(--slate-soft); margin-top: 10px; line-height: 1.6; }
-    .note strong { color: var(--slate-mid); }
-
-    /* ── Footer ────────────────────────── */
-    .footer {
-      margin-top: 24px;
-      font-size: 11.5px;
-      color: #94A3B8;
+    /* Empty state */
+    .empty-state {
+      padding: 2rem;
       text-align: center;
-      max-width: 600px;
-      line-height: 1.7;
+      color: var(--text-light);
+      font-size: 0.9rem;
     }
 
-    @media (max-width: 480px) {
-      body { padding: 24px 12px 48px; }
-      .header h1 { font-size: 22px; }
-      .input-section, .results-section { padding: 20px 18px; }
-      .rate-bar { padding: 16px 18px; flex-wrap: wrap; }
-      .results-grid { grid-template-columns: 1fr; }
-      .stat-value { font-size: 18px; }
-      .progress-track { display: none; }
+    .empty-state svg {
+      margin-bottom: 0.75rem;
+      opacity: 0.35;
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      max-width: 520px;
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* Animation */
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: slideUp 0.35s ease both;
+    }
+
+    .delay-1 {
+      animation-delay: 0.05s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.12s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.19s;
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 1.5rem;
+      }
+
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-card {
+        flex-direction: column;
+        align-items: center;
+        padding: 1.2rem 1.4rem;
+      }
+
+      .chart-legend {
+        flex-direction: row;
+        justify-content: center;
+        gap: 1.25rem;
+      }
     }
   </style>
 </head>
 
-<body>
-  <div class="header">
-    <span class="badge">New Regime · FY 2025–26</span>
-    <h1>India Income Tax Calculator</h1>
-    <p>Enter your annual salary to get an instant tax breakdown</p>
+<body x-data="taxCalc()" x-init="init()">
+
+  <div class="header animate-in">
+    <div class="header-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1H6.5c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.88-4.4z" />
+      </svg>
+      New Regime · FY 2025–26
+    </div>
   </div>
 
-  <div class="card" x-data="taxCalc()" x-init="init()">
-
-    <!-- ── Input ── -->
-    <div class="input-section">
-      <label class="input-label" for="salary">Annual Gross Salary</label>
-      <div class="input-wrap">
+  <div class="card animate-in delay-1">
+    <!-- Input -->
+    <div class="field">
+      <label for="salary">Annual Gross Salary</label>
+      <div class="input-wrapper">
         <span class="input-prefix">₹</span>
-        <input
-          id="salary"
-          class="salary-input"
-          type="number"
-          inputmode="numeric"
-          placeholder="e.g. 1200000"
-          min="0"
-          x-model.number="grossSalary"
-          @input="calculate()"
-        />
+        <input id="salary" type="number" inputmode="numeric" placeholder="e.g. 1200000" min="0"
+          x-model.number="grossSalary" @input="calculate()" />
       </div>
       <p class="input-hint" x-show="grossSalary > 0">
-        <span class="formatted" x-text="formatINR(grossSalary)"></span>
-        <span>gross · Standard deduction ₹75,000 applied</span>
+        <strong x-text="formatINR(grossSalary)"></strong> gross · Standard deduction ₹75,000 applied
       </p>
-
-      <button class="slab-toggle-btn" @click="showSlabs = !showSlabs" type="button">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M8 7v5M8 5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <span x-text="showSlabs ? 'Hide Tax Slabs' : 'View Tax Slabs'"></span>
-      </button>
-
-      <div x-show="showSlabs" x-transition>
-        <div class="slab-table-wrap">
-          <table class="slab-table">
-            <thead>
-              <tr>
-                <th>Income Range (Taxable)</th>
-                <th>Rate</th>
-                <th class="rate-cell">Tax on Slab</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template x-for="(slab, i) in slabs" :key="i">
-                <tr :class="{ 'active-slab': taxableIncome > slab.from }">
-                  <td x-text="slab.label"></td>
-                  <td x-text="slab.rateLabel"></td>
-                  <td class="rate-cell" x-text="grossSalary > 0 ? '₹' + formatNum(slab.taxOnSlab) : '—'"></td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
-        <p class="note">
-          <strong>Rebate u/s 87A:</strong> Zero tax if taxable income ≤ ₹12,00,000 (effectively tax-free up to ₹12.75L after standard deduction).
-          <strong>Cess:</strong> 4% on total tax. Surcharge applies above ₹50L.
-        </p>
-      </div>
     </div>
 
-    <div class="divider"></div>
+    <button class="slab-toggle-btn" @click="showSlabs = !showSlabs" type="button">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" />
+        <path d="M8 7v5M8 5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+      <span x-text="showSlabs ? 'Hide Tax Slabs' : 'View Tax Slabs'"></span>
+    </button>
 
-    <!-- ── Results ── -->
-    <template x-if="grossSalary > 0">
-      <div>
-        <div class="results-section">
-          <div class="results-grid">
-            <div class="stat-card green">
-              <div class="stat-label"><span class="stat-dot"></span>Yearly Take-Home</div>
-              <div class="stat-value" x-text="'₹' + formatNum(yearlyTakeHome)"></div>
-              <div class="stat-sub" x-text="formatINR(yearlyTakeHome) + ' per year'"></div>
-            </div>
-            <div class="stat-card red">
-              <div class="stat-label"><span class="stat-dot"></span>Yearly Tax</div>
-              <div class="stat-value" x-text="'₹' + formatNum(yearlyTax)"></div>
-              <div class="stat-sub" x-text="formatINR(yearlyTax) + ' incl. cess'"></div>
-            </div>
-            <div class="stat-card green">
-              <div class="stat-label"><span class="stat-dot"></span>Monthly Take-Home</div>
-              <div class="stat-value" x-text="'₹' + formatNum(monthlyTakeHome)"></div>
-              <div class="stat-sub">Per month in-hand</div>
-            </div>
-            <div class="stat-card red">
-              <div class="stat-label"><span class="stat-dot"></span>Monthly TDS</div>
-              <div class="stat-value" x-text="'₹' + formatNum(monthlyTax)"></div>
-              <div class="stat-sub">Deducted each month</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── Pie Chart ── -->
-        <div class="chart-section">
-          <div class="chart-wrap">
-            <canvas id="taxPieChart" width="130" height="130"></canvas>
-            <div class="chart-center-label">
-              <div class="chart-center-rate" x-text="effectiveRate + '%'"></div>
-              <div class="chart-center-sub">Tax Rate</div>
-            </div>
-          </div>
-          <div class="chart-legend">
-            <div class="legend-item">
-              <div class="legend-dot take-home"></div>
-              <div class="legend-info">
-                <div class="legend-label">Take-Home</div>
-                <div class="legend-value" x-text="'₹' + formatNum(yearlyTakeHome)"></div>
-                <div class="legend-pct" x-text="(100 - parseFloat(effectiveRate)).toFixed(2) + '% of gross'"></div>
-              </div>
-            </div>
-            <div class="legend-item">
-              <div class="legend-dot tax"></div>
-              <div class="legend-info">
-                <div class="legend-label">Total Tax (incl. cess)</div>
-                <div class="legend-value" x-text="'₹' + formatNum(yearlyTax)"></div>
-                <div class="legend-pct" x-text="effectiveRate + '% of gross'"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div x-show="showSlabs" x-transition>
+      <div class="slab-table-wrap">
+        <table class="slab-table">
+          <thead>
+            <tr>
+              <th>Income Range (Taxable)</th>
+              <th>Rate</th>
+              <th class="rate-cell">Tax on Slab</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(slab, i) in slabs" :key="i">
+              <tr :class="{ 'active-slab': taxableIncome > slab.from }">
+                <td x-text="slab.label"></td>
+                <td x-text="slab.rateLabel"></td>
+                <td class="rate-cell" x-text="grossSalary > 0 ? '₹' + formatNum(slab.taxOnSlab) : '—'"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
       </div>
-    </template>
+      <p class="note">
+        <strong>Rebate u/s 87A:</strong> Zero tax if taxable income ≤ ₹12,00,000 (effectively tax-free up to ₹12.75L
+        after standard deduction).
+        <strong>Cess:</strong> 4% on total tax. Surcharge applies above ₹50L.
+      </p>
+    </div>
 
     <!-- Empty state -->
     <template x-if="!(grossSalary > 0)">
       <div class="empty-state">
         <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-          <rect x="5" y="10" width="30" height="22" rx="3" stroke="#0F172A" stroke-width="2"/>
-          <path d="M13 20h14M13 25h8" stroke="#0F172A" stroke-width="2" stroke-linecap="round"/>
-          <path d="M16 10V7a4 4 0 018 0v3" stroke="#0F172A" stroke-width="2"/>
+          <rect x="5" y="10" width="30" height="22" rx="3" stroke="var(--primary)" stroke-width="2" />
+          <path d="M13 20h14M13 25h8" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" />
+          <path d="M16 10V7a4 4 0 018 0v3" stroke="var(--primary)" stroke-width="2" />
         </svg>
         <p>Enter your annual salary above to see your tax breakdown.</p>
       </div>
     </template>
-
   </div>
 
-  <p class="footer">
-    Estimates based on New Tax Regime slabs for FY 2025-26 (Budget 2025). Includes 4% health &amp; education cess and marginal relief.
+  <!-- Results -->
+  <template x-if="grossSalary > 0">
+    <div class="results">
+      <div class="results-title animate-in delay-2">Tax Breakdown</div>
+      <div class="results-grid">
+        <div class="result-card green animate-in delay-2">
+          <div class="stat-label"><span class="stat-dot"></span>Yearly Take-Home</div>
+          <div class="stat-value" x-text="'₹' + formatNum(yearlyTakeHome)"></div>
+          <div class="stat-sub" x-text="formatINR(yearlyTakeHome) + ' per year'"></div>
+        </div>
+        <div class="result-card red animate-in delay-2">
+          <div class="stat-label"><span class="stat-dot"></span>Yearly Tax</div>
+          <div class="stat-value" x-text="'₹' + formatNum(yearlyTax)"></div>
+          <div class="stat-sub" x-text="formatINR(yearlyTax) + ' incl. cess'"></div>
+        </div>
+        <div class="result-card green animate-in delay-3">
+          <div class="stat-label"><span class="stat-dot"></span>Monthly Take-Home</div>
+          <div class="stat-value" x-text="'₹' + formatNum(monthlyTakeHome)"></div>
+          <div class="stat-sub">Per month in-hand</div>
+        </div>
+        <div class="result-card red animate-in delay-3">
+          <div class="stat-label"><span class="stat-dot"></span>Monthly TDS</div>
+          <div class="stat-value" x-text="'₹' + formatNum(monthlyTax)"></div>
+          <div class="stat-sub">Deducted each month</div>
+        </div>
+      </div>
+
+      <!-- Chart Section -->
+      <div class="chart-card animate-in delay-3">
+        <div class="chart-wrap">
+          <canvas id="taxPieChart" width="120" height="120"></canvas>
+          <div class="chart-center-label">
+            <div class="chart-center-rate" x-text="effectiveRate + '%'"></div>
+            <div class="chart-center-sub">Tax Rate</div>
+          </div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item">
+            <div class="legend-dot take-home"></div>
+            <div class="legend-info">
+              <div class="legend-label">Take-Home</div>
+              <div class="legend-value" x-text="'₹' + formatNum(yearlyTakeHome)"></div>
+              <div class="legend-pct" x-text="(100 - parseFloat(effectiveRate)).toFixed(2) + '% of gross'"></div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot tax"></div>
+            <div class="legend-info">
+              <div class="legend-label">Total Tax (incl. cess)</div>
+              <div class="legend-value" x-text="'₹' + formatNum(yearlyTax)"></div>
+              <div class="legend-pct" x-text="effectiveRate + '% of gross'"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <p class="disclaimer">
+    Estimates based on New Tax Regime slabs for FY 2025-26 (Budget 2025). Includes 4% health &amp; education cess and
+    marginal relief.<br>
     Does not include surcharge on income above ₹50L, professional tax, or other deductions. Consult a CA for filing.
   </p>
 
@@ -491,13 +696,13 @@
         effectiveRate: '0.00',
 
         slabDefs: [
-          { from: 0,        to: 400000,   rate: 0.00, label: 'Up to ₹4,00,000',             rateLabel: 'Nil'  },
-          { from: 400000,   to: 800000,   rate: 0.05, label: '₹4,00,001 – ₹8,00,000',       rateLabel: '5%'   },
-          { from: 800000,   to: 1200000,  rate: 0.10, label: '₹8,00,001 – ₹12,00,000',      rateLabel: '10%'  },
-          { from: 1200000,  to: 1600000,  rate: 0.15, label: '₹12,00,001 – ₹16,00,000',     rateLabel: '15%'  },
-          { from: 1600000,  to: 2000000,  rate: 0.20, label: '₹16,00,001 – ₹20,00,000',     rateLabel: '20%'  },
-          { from: 2000000,  to: 2400000,  rate: 0.25, label: '₹20,00,001 – ₹24,00,000',     rateLabel: '25%'  },
-          { from: 2400000,  to: Infinity, rate: 0.30, label: 'Above ₹24,00,000',             rateLabel: '30%'  },
+          { from: 0, to: 400000, rate: 0.00, label: 'Up to ₹4,00,000', rateLabel: 'Nil' },
+          { from: 400000, to: 800000, rate: 0.05, label: '₹4,00,001 – ₹8,00,000', rateLabel: '5%' },
+          { from: 800000, to: 1200000, rate: 0.10, label: '₹8,00,001 – ₹12,00,000', rateLabel: '10%' },
+          { from: 1200000, to: 1600000, rate: 0.15, label: '₹12,00,001 – ₹16,00,000', rateLabel: '15%' },
+          { from: 1600000, to: 2000000, rate: 0.20, label: '₹16,00,001 – ₹20,00,000', rateLabel: '20%' },
+          { from: 2000000, to: 2400000, rate: 0.25, label: '₹20,00,001 – ₹24,00,000', rateLabel: '25%' },
+          { from: 2400000, to: Infinity, rate: 0.30, label: 'Above ₹24,00,000', rateLabel: '30%' },
         ],
         slabs: [],
 
@@ -511,7 +716,6 @@
           const taxable = Math.max(0, gross - STD_DEDUCTION);
           this.taxableIncome = taxable;
 
-          // Slab-wise raw tax
           let rawTax = 0;
           this.slabs = this.slabDefs.map(s => {
             const slabIncome = Math.min(
@@ -523,7 +727,6 @@
             return { ...s, taxOnSlab };
           });
 
-          // Rebate u/s 87A — zero tax if taxable ≤ ₹12,00,000
           if (taxable <= 1200000) {
             rawTax = 0;
           } else {
@@ -531,23 +734,21 @@
             if (rawTax > marginalRelief) rawTax = marginalRelief;
           }
 
-          // Surcharge
           let surcharge = 0;
-          if      (taxable > 50000000)  surcharge = rawTax * 0.25;
-          else if (taxable > 20000000)  surcharge = rawTax * 0.25;
-          else if (taxable > 10000000)  surcharge = rawTax * 0.15;
-          else if (taxable > 5000000)   surcharge = rawTax * 0.10;
+          if (taxable > 50000000) surcharge = rawTax * 0.25;
+          else if (taxable > 20000000) surcharge = rawTax * 0.25;
+          else if (taxable > 10000000) surcharge = rawTax * 0.15;
+          else if (taxable > 5000000) surcharge = rawTax * 0.10;
 
-          // 4% cess
           const taxPlusSurcharge = rawTax + Math.round(surcharge);
           const cess = Math.round(taxPlusSurcharge * 0.04);
           const totalTax = taxPlusSurcharge + cess;
 
-          this.yearlyTax       = totalTax;
-          this.yearlyTakeHome  = Math.max(0, gross - totalTax);
-          this.monthlyTax      = Math.round(totalTax / 12);
+          this.yearlyTax = totalTax;
+          this.yearlyTakeHome = Math.max(0, gross - totalTax);
+          this.monthlyTax = Math.round(totalTax / 12);
           this.monthlyTakeHome = Math.round(this.yearlyTakeHome / 12);
-          this.effectiveRate   = gross > 0 ? ((totalTax / gross) * 100).toFixed(2) : '0.00';
+          this.effectiveRate = gross > 0 ? ((totalTax / gross) * 100).toFixed(2) : '0.00';
 
           this.$nextTick(() => this.renderChart());
         },
@@ -556,7 +757,7 @@
           const canvas = document.getElementById('taxPieChart');
           if (!canvas) return;
           const takeHome = this.yearlyTakeHome;
-          const tax      = this.yearlyTax;
+          const tax = this.yearlyTax;
 
           if (this._chart) {
             this._chart.data.datasets[0].data = [takeHome, tax];
@@ -570,9 +771,9 @@
               labels: ['Take-Home', 'Tax'],
               datasets: [{
                 data: [takeHome, tax],
-                backgroundColor: ['#10B981', '#EF4444'],
-                hoverBackgroundColor: ['#059669', '#DC2626'],
-                borderColor: '#0F172A',
+                backgroundColor: ['#2d7a4f', '#e8613a'],
+                hoverBackgroundColor: ['#1a5c3a', '#f5845e'],
+                borderColor: '#1a3a5c',
                 borderWidth: 3,
                 hoverOffset: 6,
               }]
@@ -589,9 +790,9 @@
                       return ` ₹${ctx.parsed.toLocaleString('en-IN')}  (${pct}%)`;
                     }
                   },
-                  backgroundColor: '#1E293B',
-                  titleColor: '#94A3B8',
-                  bodyColor: '#F1F5F9',
+                  backgroundColor: '#1a3a5c',
+                  titleColor: '#9aa6b0',
+                  bodyColor: '#f1f5f9',
                   padding: 10,
                   cornerRadius: 8,
                 }
@@ -608,12 +809,14 @@
         formatINR(n) {
           const abs = Math.abs(Number(n) || 0);
           if (abs >= 10000000) return (abs / 10000000).toFixed(2).replace(/\.?0+$/, '') + ' Cr';
-          if (abs >= 100000)   return (abs / 100000).toFixed(2).replace(/\.?0+$/, '') + ' L';
-          if (abs >= 1000)     return (abs / 1000).toFixed(1).replace(/\.?0+$/, '') + 'K';
+          if (abs >= 100000) return (abs / 100000).toFixed(2).replace(/\.?0+$/, '') + ' L';
+          if (abs >= 1000) return (abs / 1000).toFixed(1).replace(/\.?0+$/, '') + 'K';
           return abs.toString();
         },
       };
     }
   </script>
+
 </body>
+
 </html>
